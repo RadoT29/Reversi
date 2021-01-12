@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reversi</title>
+    <title>Reversi Game</title>
 </head>
     <main>
         <section id="left">
@@ -104,17 +104,12 @@
             <div id="right corner"></div>
         </section>
 
+        <script src="javascripts/config.js"></script>
         <script src="javascripts/messages.js"></script>
         <script>
-            const target = document.getElementsByID("black score");
-            const socket = new WebSocket("ws://localhost:3001");
-            socket.onmessage = function(event){
-                target.innerHTML = event.data;
-            };
-
-            socket.onopen = function(){
-                socket.send("Hello from the client!");
-                target.innerHTML = "Sending a first message to the server ...";
+            var socket = new WebSocket(Setup.WEB_SOCKET_URL);
+            socket.onopen = function () {
+            socket.send("{}");
             };
         </script>
     </main> 

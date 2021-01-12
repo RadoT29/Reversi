@@ -5,7 +5,7 @@ router.get('/', function(req, res) {
   res.sendFile('splash.html', { root: "./public"});
 });
 
-router.get('/play_game', function(req, res){
+router.get('/play', function(req, res){
   res.sendFile('game.html',{ root: "./public"});
 });
 
