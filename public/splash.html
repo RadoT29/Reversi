@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reversi</title>
+</head>
+<body>
+    <main>
+        <section id="left">
+            <h1>Reversi</h1>
+            <h2>The board game for two</h2>
+            <img src="reversi.logo.PNG" alt="Logo of the game">
+
+            <form action="/play_game" method="get"> -->
+                <button type="submit">Play</button>
+            </form> 
+        </section>
+        <section id="right">
+            <h2>Won games:</h2>
+            <h2>Completed games:</h2>
+            <h2>Opponents online:</h2>
+           <!-- <h3><%= startedGames %> 
+                <%if (startedGames != 1) { %>
+                    games
+                <% } else { %>
+                    game
+                <% } %>
+                initialized, 
+                <%= finishedGames %> 
+                completed
+            </h3> -->
+        </section>
+    </main>
+    <script>
+        const send = document.getElementById("submit");
+        let ws = new WebSocket("ws://localhost:3000");
+        ws.onopen = () => {
+            console.log("Connection opened!");
+        };
+    </script>   
+</body>
+</html>

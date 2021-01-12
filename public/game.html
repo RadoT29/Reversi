@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reversi</title>
+</head>
+    <main>
+        <section id="left">
+            <h1>Reversi</h1>
+            <span id="black piece"></span>
+            <h3>Opponent</h3>
+            <span id="white piece"></span>
+            <h3>You</h3>
+        </section>
+        <section id="center">
+            
+            <table id="board" width= 100px  height= 100px>
+                <tr id="row_1" >
+                    <td id="1.1"  bgcolor="#16C79A"></td>
+                    <td id="1.3"  bgcolor="#16C79A"></td>
+                    <td id="1.4"  bgcolor="#16C79A"></td>
+                    <td id="1.5"  bgcolor="#16C79A"></td>
+                    <td id="1.6"  bgcolor="#16C79A"></td>
+                    <td id="1.7"  bgcolor="#16C79A"></td>
+                    <td id="1.8"  bgcolor="#16C79A"></td>
+                </tr>
+                <tr id="row_2" 
+                    <td id="2.1"  bgcolor="#16C79A"></td>
+                    <td id="2.2"  bgcolor="#16C79A"></td>
+                    <td id="2.3"  bgcolor="#16C79A"></td>
+                    <td id="2.4"  bgcolor="#16C79A"></td>
+                    <td id="2.5"  bgcolor="#16C79A"></td>
+                    <td id="2.6"  bgcolor="#16C79A"></td>
+                    <td id="2.7"  bgcolor="#16C79A"></td>
+                    <td id="2.8"  bgcolor="#16C79A"></td>
+                </tr>
+                <tr id="row_3" 
+                    <td id="3.1"  bgcolor="#16C79A"></td>
+                    <td id="3.2"  bgcolor="#16C79A"></td>
+                    <td id="3.3"  bgcolor="#16C79A"></td>
+                    <td id="3.4"  bgcolor="#16C79A"></td>
+                    <td id="3.5"  bgcolor="#16C79A"></td>
+                    <td id="3.6"  bgcolor="#16C79A"></td>
+                    <td id="3.7"  bgcolor="#16C79A"></td>
+                    <td id="3.8"  bgcolor="#16C79A"></td>
+                </tr>
+                <tr id="row_4" 
+                    <td id="4.1"  bgcolor="#16C79A"></td>
+                    <td id="4.2"  bgcolor="#16C79A"></td>
+                    <td id="4.3"  bgcolor="#16C79A"></td>
+                    <td id="4.4"  bgcolor="#16C79A"></td>
+                    <td id="4.5"  bgcolor="#16C79A"></td>
+                    <td id="4.6"  bgcolor="#16C79A"></td>
+                    <td id="4.7"  bgcolor="#16C79A"></td>
+                    <td id="4.8"  bgcolor="#16C79A"></td>
+                </tr>
+                <tr id="row_5"
+                    <td id="5.1"  bgcolor="#16C79A"></td>
+                    <td id="5.2"  bgcolor="#16C79A"></td>
+                    <td id="5.3"  bgcolor="#16C79A"></td>
+                    <td id="5.4"  bgcolor="#16C79A"></td>
+                    <td id="5.5"  bgcolor="#16C79A"></td>
+                    <td id="5.6"  bgcolor="#16C79A"></td>
+                    <td id="5.7"  bgcolor="#16C79A"></td>
+                    <td id="5.8"  bgcolor="#16C79A"></td>
+                </tr>
+                <tr id="row_6" 
+                    <td id="6.1"  bgcolor="#16C79A"></td>
+                    <td id="6.2"  bgcolor="#16C79A"></td>
+                    <td id="6.3"  bgcolor="#16C79A"></td>
+                    <td id="6.4"  bgcolor="#16C79A"></td>
+                    <td id="6.5"  bgcolor="#16C79A"></td>
+                    <td id="6.6"  bgcolor="#16C79A"></td>
+                    <td id="6.7"  bgcolor="#16C79A"></td>
+                    <td id="6.8"  bgcolor="#16C79A"></td>
+                </tr>
+                <tr id="row_7" 
+                    <td id="7.1"  bgcolor="#16C79A"></td>
+                    <td id="7.2"  bgcolor="#16C79A"></td>
+                    <td id="7.3"  bgcolor="#16C79A"></td>
+                    <td id="7.4"  bgcolor="#16C79A"></td>
+                    <td id="7.5"  bgcolor="#16C79A"></td>
+                    <td id="7.6"  bgcolor="#16C79A"></td>
+                    <td id="7.7"  bgcolor="#16C79A"></td>
+                    <td id="7.8"  bgcolor="#16C79A"></td>
+                </tr>
+                <tr id="row_8"
+                    <td id="8.1"  bgcolor="#16C79A"></td>
+                    <td id="8.2"  bgcolor="#16C79A"></td>
+                    <td id="8.3"  bgcolor="#16C79A"></td>
+                    <td id="8.4"  bgcolor="#16C79A"></td>
+                    <td id="8.5"  bgcolor="#16C79A"></td>
+                    <td id="8.6"  bgcolor="#16C79A"></td>
+                    <td id="8.7"  bgcolor="#16C79A"></td>
+                    <td id="8.8"  bgcolor="#16C79A"></td>
+            </tr>
+            </table>
+        </section>
+        <section id="right">
+            <h2>Score</h2>
+            <span id="black score"></span>
+            <span id="white score"></span>
+            <div id="right corner"></div>
+        </section>
+
+        <script src="javascripts/messages.js"></script>
+        <script>
+            const target = document.getElementsByID("black score");
+            const socket = new WebSocket("ws://localhost:3001");
+            socket.onmessage = function(event){
+                target.innerHTML = event.data;
+            };
+
+            socket.onopen = function(){
+                socket.send("Hello from the client!");
+                target.innerHTML = "Sending a first message to the server ...";
+            };
+        </script>
+    </main> 
+<body>
+    
+</body>
+</html>
