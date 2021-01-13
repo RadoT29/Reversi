@@ -92,7 +92,7 @@ mygame.prototype.setStatus = function(newEntry) {
         mygame.prototype.isTransformPossible(this.gameState, newEntry)
       ) {
         this.gameState = newEntry;
-        console.log("[CURRENT EVENT] %s", this.gameState);
+        console.log("[CURRENT GAME STATE] %s", this.gameState);
       } else {
         return new Error(
           "Impossible status change from %s to %s",
