@@ -7,6 +7,7 @@ var messages = require("./public/javascripts/messages");
 
 var status = require("./Stats");
 var Game = require("./game");
+const { playerCount } = require("./Stats");
 
 var port = process.argv[2];
 var app = express();
@@ -16,9 +17,10 @@ app.use(express.static(__dirname + "/public"));
 app.get("/play", router);
 
 app.get("/", (req, res) =>{
-    res.sendFile("/University/Y1/Q2/WDT/WEB/2/myapp/public/splash.html",{
+    res.render("splash.ejs",{
         startedGames: status.startedGames,
-        finishedGames: status.finishedGames
+        finishedGames: status.finishedGames,
+        playerCount: status.playerCount
       });
 });
 
@@ -50,6 +52,7 @@ wss.on("connection", function connection(ws){
   let connected = ws;
   connected.id = connectionID++;
   let player = newGame.addPlayer(connected);
+  status.playerCount++;
   websockets[connected.id] = newGame;
 
   console.log(
@@ -65,14 +68,18 @@ wss.on("connection", function connection(ws){
         newGame = new Game(status.startedGames++);
     }
 
+
     connected.on("close", function(code){
+
         console.log(connected.id + " disconnected ...");
 
         if(code == "1001"){
+
             let gameObj = websockets[connected.id];
 
             if (gameObj.isTransformPossible(gameObj.gameState, "ABORTED")) {
-            gameObj.setStatus("ABORTED");
+              gameObj.setStatus("ABORTED");
+              gameObj.playerCount--;
 
         try {
             gameObj.WhitePlayer.close();
@@ -86,6 +93,16 @@ wss.on("connection", function connection(ws){
             gameObj.BlackPlayer = null;
           } catch (e) {
             console.log("Black Player closing: " + e);
+          }
+        }
+
+        if(gameObj.isTransformPossible(gameObj.gameState, "0")){
+          gameObj.setStatus("0");
+          try {
+            gameObj.WhitePlayer.close();
+            gameObj.WhitePlayer = null;
+          } catch (e) {
+            console.log("White Player closing: " + e);
           }
         }
         }

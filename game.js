@@ -28,25 +28,28 @@ mygame.prototype.transformList = [
 mygame.prototype.isTransformPossible = function(from, to){
     console.assert(
         typeof from == "string",
+        "%s: Expecting %s to be a string",
         arguments.callee.name,
         typeof from
     );
 
     console.assert(
         typeof to == "string",
+        "%s: Expecting %s to be a string",
         arguments.callee.name,
         typeof to
     );
 
     console.assert(
-     from in mygame.prototype.transformList == true,
+     from in mygame.prototype.states == true,
      "%s: Expecting %s to be a valid transition state",
      arguments.callee.name,
      from
     );
 
     console.assert(
-        to in mygame.prototype.transformList == true,
+        to in mygame.prototype.states == true,
+        "%s: Expecting %s to be a valid transition state",
         arguments.callee.name,
         to
     );
@@ -89,7 +92,7 @@ mygame.prototype.setStatus = function(newEntry) {
         mygame.prototype.isTransformPossible(this.gameState, newEntry)
       ) {
         this.gameState = newEntry;
-        console.log("[STATUS] %s", this.gameState);
+        console.log("[CURRENT EVENT] %s", this.gameState);
       } else {
         return new Error(
           "Impossible status change from %s to %s",
