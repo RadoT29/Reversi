@@ -98,6 +98,7 @@ wss.on("connection", function connection(ws){
 
         if(gameObj.isTransformPossible(gameObj.gameState, "0")){
           gameObj.setStatus("0");
+          gameObj.playerCount--;
           try {
             gameObj.WhitePlayer.close();
             gameObj.WhitePlayer = null;
