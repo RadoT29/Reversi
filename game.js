@@ -4,6 +4,7 @@ var mygame = function(ID){
     this.BlackPlayer = null;
     this.gameState = "0";
     this.possibleMoves = 1;
+    this.turn = "WHITE";  
 };
 
 mygame.prototype.states = {};
@@ -130,8 +131,4 @@ mygame.prototype.addPlayer = function(newPlayer){
         return "Black";
     }
 };
-  
-
-
-
 module.exports = mygame;

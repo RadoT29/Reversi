@@ -8,6 +8,7 @@ var messages = require("./public/javascripts/messages");
 var status = require("./Stats");
 var Game = require("./game");
 const { playerCount } = require("./Stats");
+const { connect } = require("./routes/index");
 
 var port = process.argv[2];
 var app = express();
@@ -68,6 +69,37 @@ wss.on("connection", function connection(ws){
         newGame = new Game(status.startedGames++);
     }
 
+    connected.on("message", function(message){
+      let currentMessage = JSON.parse(message);
+      let theGame = websockets[connected.id];
+      let isPlayerWhite = theGame.WhitePlayer == connected ? true : false;
+  
+      if (isPlayerWhite) {
+        if (currentMessage.type == messages.HAS_MADE_A_MOVE) {
+          if (theGame.hasTwoConnectedPlayers()) {
+            theGame.BlackPlayer.send(message);
+          }
+        }
+
+        if (currentMessage.type == messages.GAME_WON_BY) {
+          theGame.setStatus(currentMessage.data);
+          gameStatus.finishedGames++;
+        }
+      } else {
+        if (currentMessage.type == messages.HAS_MADE_A_MOVE) {
+          if (theGame.hasTwoConnectedPlayers()) {
+            theGame.WhitePlayer.send(message);
+          }
+        }
+     
+        if (currentMessage.type == messages.GAME_WON_BY) {
+          theGame.setStatus(currentMessage.data);
+          gameStatus.finishedGames++;
+        }
+      }
+    });
+    
+
 
     connected.on("close", function(code){
 
@@ -107,8 +139,11 @@ wss.on("connection", function connection(ws){
           }
         }
         }
-    });
+    });  
 });
+ 
+
+
 
 server.listen(port, () =>{
     console.log("Server started on port: %s", port);
