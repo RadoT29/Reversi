@@ -9,6 +9,7 @@ var status = require("./Stats");
 var Game = require("./game");
 const { playerCount } = require("./Stats");
 const { connect } = require("./routes/index");
+const { appendFileSync } = require("fs");
 
 var port = process.argv[2];
 var app = express();
@@ -28,16 +29,16 @@ app.get("/", (req, res) =>{
 const server =  http.createServer(app);
 const wss = new WebSocket.Server({ server }); 
 
-var websockets = {};
+var currentgames = {};
 
 
 setInterval(function() {
-  for (let i in websockets) {
-    if (Object.prototype.hasOwnProperty.call(websockets,i)) {
-      let gameObj = websockets[i];
+  for (let i in currentgames) {
+    if (Object.prototype.hasOwnProperty.call(currentgames,i)) {
+      let gameObj = currentgames[i];
       //if the gameObj has a final status, the game is complete/aborted
       if (gameObj.finalStatus != null) {
-        delete websockets[i];
+        delete currentgames[i];
       }
     }
   }
@@ -54,7 +55,7 @@ wss.on("connection", function connection(ws){
   connected.id = connectionID++;
   let player = newGame.addPlayer(connected);
   status.playerCount++;
-  websockets[connected.id] = newGame;
+  currentgames[connected.id] = newGame;
 
   console.log(
     "Player %s is placed in game %s as %s",
@@ -62,21 +63,21 @@ wss.on("connection", function connection(ws){
     newGame.id,
     player
   );
-    
-    connected.send(player == "WHITE" ? messages.WHITE_PLAYER_STRING : messages.BLACK_PLAYER_STRING);
+
+  connected.send(player == "WHITE" ? messages.WHITE_PLAYER_STRING : messages.BLACK_PLAYER_STRING);
 
     if(newGame.has2Players()){
-        newGame = new Game(status.startedGames++);
+      newGame = new Game(status.startedGames++);
     }
 
-    connected.on("message", function(message){
+  connected.on("message", function(message){
       let currentMessage = JSON.parse(message);
-      let theGame = websockets[connected.id];
+      let theGame = currentgames[connected.id];
       let isPlayerWhite = theGame.WhitePlayer == connected ? true : false;
-  
+    
       if (isPlayerWhite) {
         if (currentMessage.type == messages.HAS_MADE_A_MOVE) {
-          if (theGame.hasTwoConnectedPlayers()) {
+          if (theGame.has2Players()) {
             theGame.BlackPlayer.send(message);
           }
         }
@@ -85,9 +86,9 @@ wss.on("connection", function connection(ws){
           theGame.setStatus(currentMessage.data);
           gameStatus.finishedGames++;
         }
-      } else {
+      } else{
         if (currentMessage.type == messages.HAS_MADE_A_MOVE) {
-          if (theGame.hasTwoConnectedPlayers()) {
+          if (theGame.has2Players()) {
             theGame.WhitePlayer.send(message);
           }
         }
@@ -107,7 +108,7 @@ wss.on("connection", function connection(ws){
 
         if(code == "1001"){
 
-            let gameObj = websockets[connected.id];
+            let gameObj = currentgames[connected.id];
 
             if (gameObj.isTransformPossible(gameObj.gameState, "ABORTED")) {
               gameObj.setStatus("ABORTED");

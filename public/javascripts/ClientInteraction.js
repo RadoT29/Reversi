@@ -1,27 +1,35 @@
+var ws;
+const handlePlayedMove = data => {
+	addDisk(null, data);
+};
+
 const openWebSocketConnection = () => {
 	console.log("openWebSocketConnection");
-	var ws = new WebSocket(Setup.WEB_SOCKET_URL);
+    ws = new WebSocket(Setup.WEB_SOCKET_URL);
 
 	ws.onopen = () => {
-        console.log("ws is now open");
+		console.log("ws is now open");
 	};
 
-	/*ws.onmessage = data => {
-		let parsedData = JSON.parse(data.data);
-
-		if (parsedData.messageName === "greeting") {
-			console.log(parsedData.message);
-		} else if (parsedData.name === "playedMove") {
-			handlePlayedMove(parsedData);
-		} else if (parsedData.name === "allSockets") {
-			setOpponentUsername(parsedData.message);
+	ws.onmessage = function(message) {
+		let currentMessage = JSON.parse(message.data);
+		if (currentMessage.type == Messages.HAS_MADE_A_MOVE){
+			handlePlayedMove(currentMessage);
+		} else if (currentMessage.data == "WHITE"){
+			colorOfPlayer = "W";
+			console.log(colorOfPlayer);
+		} else if (currentMessage.data == "BLACK"){
+			colorOfPlayer = "B";
+			console.log(colorOfPlayer);
+		} else{
+			return;
 		}
 	};
-*/
+
 	ws.onclose = () => {
 		ws.send(
 			JSON.stringify({
-				messageName: "socketClosed"
+				data: "socketClosed"
 			})
 		);
 	};

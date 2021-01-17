@@ -1,0 +1,92 @@
+body {	
+	background-color:rgb(221, 221, 221);
+	margin: 0 auto;
+    overflow: hidden;
+    height: 100vh;
+	justify-content: space-evenly;
+}
+
+#center {
+	width: 100%;
+	letter-spacing: 2px;
+}
+
+#center h1 {
+    color: rgb(244, 85, 81);
+    font-size: 4em;
+    margin: 5% 0 0 3%;
+    font-weight: bold;
+}
+
+#center h2 {
+    color: rgb(49, 71, 94);
+    font-size: 2.5em;
+    margin: 2% 0 0 3%;
+    font-weight: bold;
+}
+
+#game-button {
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+	padding: 5px 40px;
+    font-size: 2.5em;
+	text-align: center;
+	cursor: pointer;
+	outline: none;
+	background-color: rgb(49, 71, 94);
+	border: none;
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);     
+	color: rgb(244, 85, 81);
+    transition: all 0.05s linear;
+}
+
+#game-button:hover{
+    font-size: 1.5em;
+}
+
+.logo {
+    position: absolute;
+    width: 40vh;
+    bottom: 2.5%;
+    left: 3%;
+}
+
+.right{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 100vh 45vw;
+    border-color: transparent transparent rgb(33, 40, 50) transparent;
+}
+
+#right-corner{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 30vh 15vw;
+    border-color: transparent transparent rgb(33, 40, 50) transparent;
+}
+
+.score{
+    right: 5%;
+    bottom: 2.5%;
+    position: absolute;
+    width: 30vw;
+    float: right;
+    color: rgb(244, 85, 81);
+    font-size: 2em;
+    text-align: right;
+}
+.score h3{
+    margin: 2% 0 2% 0;
+}

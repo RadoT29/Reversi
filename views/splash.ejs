@@ -4,46 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reversi</title>
+    <link rel="stylesheet" type="text/css" href="styleGame.css"/>
 </head>
 <body>
     <main>
-        <section id="left">
+        <section id="center">
             <h1>Reversi</h1>
-            <h2>The board game for two</h2>
-            <img src="reversi.logo.PNG" alt="Logo of the game">
-
-            <form action="/play" method="get"> -->
-                <button type="submit">Play</button>
+            <h2>The board <br> game for two</h2>
+            <img class = "logo"src="images/reversiSmallBoard.jpg" alt="Logo of the game">
+            <form action="/play" method="get">
+                <button id="game-button" type="submit" onclick="connect()">Play</button>
             </form> 
+            <div class="right">
+            </div>
         </section>
-        <section id="right">
-            <h2>Won games:</h2>
-            <h2>Completed games:</h2>
-            <h2>Opponents online:</h2>
-          <h3><%= startedGames %> 
+        <div class="score">
+            
+            <h3>
                 <%if (startedGames != 1) { %>
-                    games
+                    Games
                 <% } else { %>
-                    game
+                    Game
                 <% } %>
-                started, 
-                <%= finishedGames %> 
-                <%if (finishedGames != 1) { %>
-                    games
-                <% } else { %>
-                    game
-                <% } %>
-                completed,
-                <%= playerCount %>
-                <%if (playerCount != 1) { %>
-                    players
-                <% } else { %>
-                    player
-                <% } %>
-                online
+                started:
+                <%= startedGames - 1 %> 
             </h3>
-        </section>
+            <h3>
+                <%if (playerCount != 1) { %>
+                    Players
+                <% } else { %>
+                    Player
+                <% } %>
+                online:
+                <%= playerCount %>
+            </h3>
+            <h3>
+                <%if (finishedGames != 1) { %>
+                    Games
+                <% } else { %>
+                    Game
+                <% } %>
+                completed:
+                <%= finishedGames %> 
+            </h3>
+            
+        </div>
     </main>
-    
 </body>
 </html>

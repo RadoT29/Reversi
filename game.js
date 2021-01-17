@@ -14,7 +14,8 @@ mygame.prototype.states["2"] = 2;
 mygame.prototype.states["NO MOVES"] =3;
 mygame.prototype.states["WHITE"] = 4; 
 mygame.prototype.states["BLACK"] = 5;
-mygame.prototype.states["ABORTED"] = 6;
+mygame.prototype.states["DRAW"] = 6;
+mygame.prototype.states["ABORTED"] = 7;
 
 mygame.prototype.transformList = [
   [0, 1, 0, 0, 0, 0, 0], //0 
@@ -23,6 +24,7 @@ mygame.prototype.transformList = [
   [0, 0, 0, 1, 1, 1, 1], //NO MORE MOVES
   [0, 0, 0, 0, 0, 0, 0], //WHITE WON
   [0, 0, 0, 0, 0, 0, 0], //BLACK WON
+  [0, 0, 0, 0, 0, 0, 0], //DRAW
   [0, 0, 0, 0, 0, 0, 0] //ABORTED
 ];
 
@@ -125,10 +127,10 @@ mygame.prototype.addPlayer = function(newPlayer){
 
     if(this.WhitePlayer == null){
         this.WhitePlayer = newPlayer;
-        return "White";
+        return "WHITE";
     }else{
         this.BlackPlayer = newPlayer;
-        return "Black";
+        return "BLACK";
     }
 };
 module.exports = mygame;
