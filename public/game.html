@@ -7,28 +7,39 @@
     <link rel="stylesheet" type="text/css" href="styleGame.css" />
 </head>
  <body>
-    <main>
-        <section id="left">
+    <main class="game-body">
+        <section id="titles">
+            
             <h1>Reversi</h1>
-            <span id="black piece"></span>
+            <div class="opponent">
+            <div id="opp"></div>
             <h3>Opponent</h3>
-            <span id="white piece"></span>
+            </div>
+            <div class="you">
+            <div id="I"></div>
             <h3>You</h3>
+            </div>
         </section>
-        <section id="center">
+        <section id="game-section" >
+            <div id="main-game"></div>
         </section>
-        <section id="right">
+        <section id="scores">
+            <div class="scores-spacing">
             <h2>Score</h2>
+            <div  class="actual-scores">
             <div id="black-score">2</div>
             <div id="white-score">2</div>
-            <div id="right-corner"></div>
-        </section>
+            </div>
+            </div>
+            <div id="win-lose-draw"></div>
+        </section>  
+    </main>   
 
-        
-    </main>    
-        <script src="javascripts/config.js"></script>
-        <script src="javascripts/ClientInteraction.js"></script>
-        <script src="javascripts/messages.js"></script>
-        <script src="javascripts/gameMechanics.js"></script>
+    <div id="right-corner"></div> 
+
+    <script src="javascripts/config.js"></script>
+    <script src="javascripts/ClientInteraction.js"></script>
+    <script src="javascripts/messages.js"></script>
+    <script src="javascripts/gameMechanics.js"></script>
 </body>
 </html>

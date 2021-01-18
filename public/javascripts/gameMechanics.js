@@ -18,50 +18,27 @@ var newBoardArray = function(){
  };
 
  var createBoardHtml = function(){
-    var container = document.querySelector("#center");
+    var container = document.querySelector("#main-game");
     var boardContainer = document.createElement("div");
 	boardContainer.setAttribute("class", "main-board");
 	var boardFrame = document.createElement("div");
 	boardFrame.setAttribute("class", "board-frame");
 
-	// markers
-	var boardHMarkersContainer = document.createElement("div");
-	boardHMarkersContainer.setAttribute("class", "h-markers-container");
-
-	for (var i = 0; i < 8; i++) {
-		var boardHMarkers = document.createElement("div");
-		boardHMarkers.setAttribute("class", "h-markers");
-		boardHMarkersContainer.appendChild(boardHMarkers);
-		boardHMarkers.innerHTML = i + 1;
-	}
-
-	var boardVMarkersContainer = document.createElement("div");
-	boardVMarkersContainer.setAttribute("class", "v-markers-container");
-
-	for (var i = 0; i < 8; i++) {
-		var boardVMarkers = document.createElement("div");
-		boardVMarkers.setAttribute("class", "v-markers");
-		boardVMarkersContainer.appendChild(boardVMarkers);
-		boardVMarkers.innerHTML = String.fromCharCode(65 + i);
-	}
-
-	var squareColorCounter = 0;
-
 	for (var i = 0; i < 8; i++) {
 		var row = document.createElement("div");
+		if(i==7){
+			row.setAttribute("class", "rowLast")
+		}else{
 		row.setAttribute("class", "row");
-		squareColorCounter++;
+		}
 		for (var j = 0; j < 8; j++) {
 			var square = document.createElement("div");
-			square.setAttribute("class", "col square squareCell");
-			squareColorCounter++;
+			square.setAttribute("class", "col");
 			row.appendChild(square);
 		}
 		boardContainer.appendChild(row);
 	}
 	boardFrame.appendChild(boardContainer);
-	boardFrame.appendChild(boardHMarkersContainer);
-	boardFrame.appendChild(boardVMarkersContainer);
 	container.appendChild(boardFrame);
  }
   
@@ -75,11 +52,11 @@ var placeStartingDisks = function(){
           var yValue = parseInt(file.getAttribute("vertical"));
       var disk = document.createElement("div");
       if (colour % 2 === 0) {
-              disk.setAttribute("class", "white-tiles");
+              disk.setAttribute("class", "white-disks");
         boardArray[yValue][xValue] = "W";
         
           } else {
-              disk.setAttribute("class", "black-tiles");
+              disk.setAttribute("class", "black-disks");
         boardArray[yValue][xValue] = "B";
             }
           file.appendChild(disk);
@@ -94,10 +71,10 @@ var placeStartingDisks = function(){
           var yValue = parseInt(file.getAttribute("vertical"));
       var disk = document.createElement("div");
       if (colour % 2 === 0) {
-              disk.setAttribute("class", "white-tiles");
+              disk.setAttribute("class", "white-disks");
               boardArray[yValue][xValue] = "W";
           } else {
-              disk.setAttribute("class", "black-tiles");
+              disk.setAttribute("class", "black-disks");
               boardArray[yValue][xValue] = "B";
           }
           file.appendChild(disk);
@@ -142,7 +119,7 @@ var diskCounting = function () {
 };
 
 const getFiles = (x, y) => {
-	const files = document.querySelectorAll(".squareCell");
+	const files = document.querySelectorAll(".col");
 
 	for (let i = 0; i < files.length; i++) {
 		let file = files[i];
@@ -157,103 +134,104 @@ const getFiles = (x, y) => {
 };
 
 var addDisk = (event, socketData = null) => {
-	let xValue, yValue, getSym, target;
+	let xValue, yValue, colourOfTurn, target;
 
   if(!socketData) {
 		event instanceof Element ? (target = event) : (target = event.target);
 
 		xValue = parseInt(target.getAttribute("horizontal"));
 		yValue = parseInt(target.getAttribute("vertical"));
-		getSym = counter % 2 === 0 ? "W" : "B";
+		colourOfTurn = counter % 2 === 0 ? "W" : "B";
   }else{
 		xValue = socketData.message.x;
 		yValue = socketData.message.y;
-		getSym = socketData.message.sym;
+		colourOfTurn = socketData.message.color;
 		target = getFiles(xValue, yValue);
-		console.log("target gotten = ", target);
   }
   
   if (!socketData) {
-		if (colorOfPlayer !== getSym) {
+		if (colorOfPlayer !== colourOfTurn) {
 			console.log("It is not your turn");
-		return;
+			return;
 	}
 	}
 
-  console.log("event getx, gety, getsym, target", xValue, yValue, getSym);
+  console.log( colourOfTurn+" player made a move: horizontal:"+xValue+", vertical: "+yValue,);
   
-	if (checkOKtoPlace(getSym, xValue, yValue)) {
+	if (checkOKtoPlace(colourOfTurn, xValue, yValue)) {
 		removePredictionDots();
 
 		var disk = document.createElement("div");
 		target.classList.add("test");
 
-		if (getSym === "W") {
-			disk.setAttribute("class", "white-tiles");
-			boardArray[yValue][xValue] = getSym;
+		if (colourOfTurn === "W") {
+			disk.setAttribute("class", "white-disks");
+			boardArray[yValue][xValue] = colourOfTurn;
 		} else {
-			disk.setAttribute("class", "black-tiles");
-			boardArray[yValue][xValue] = getSym;
+			disk.setAttribute("class", "black-disks");
+			boardArray[yValue][xValue] = colourOfTurn;
 		}
-		changeRespectiveDisks(target, getSym, xValue, yValue);
+		changeRespectiveDisks(target, colourOfTurn, xValue, yValue);
 
 		counter++;
 
 		target.appendChild(disk);
 		target.removeEventListener("click", addDisk);
 
-			console.log(target);
+		if(!socketData){
 			ws.send(
 				JSON.stringify({
 					type: Messages.HAS_MADE_A_MOVE,
 					data: "playedMove",
-					message: { sym: getSym, x: xValue, y: yValue }
+					message: { color: colourOfTurn, x: xValue, y: yValue }
 				})
 			);
+		}
 		diskCounting();
-		getSym = counter % 2 === 0 ? "W" : "B";
+		colourOfTurn = counter % 2 === 0 ? "W" : "B";
 
-		console.log(getSym + "turn");
-		var slots = checkSlots(getSym);
+		console.log(colourOfTurn + "'s turn");
+		var slots = checkSlots(colourOfTurn);
 
 		if (slots.empty > 0) {
 			if (slots.movable > 0) {
-				console.log(getSym + "still can place a disk");
-        		predictionDots(getSym);
+				console.log(colourOfTurn + " still can place a disk");
+        		predictionDots(colourOfTurn);
 			} else {
-				console.log(getSym + "no place to place a disk, pass");
+				console.log(colourOfTurn + " has no place to place a disk, pass");
 				counter++;
-				getSym = counter % 2 === 0 ? "W" : "B";
-				console.log(getSym + "turn");
-				var slots = checkSlots(getSym);
+				colourOfTurn = counter % 2 === 0 ? "W" : "B";
+				console.log(colourOfTurn + "'s turn");
+				var slots = checkSlots(colourOfTurn);
 				if (slots.movable > 0) {
-					predictionDots(getSym);
+					predictionDots(colourOfTurn);
 				} else {
-					console.log(getSym + "also cannot place a disk, end game ");
+					console.log(colourOfTurn + " also cannot place a disk, end game ");
 					tempStopAllClicks();
 					checkWin();
 				}
 			}
 		} else {
-			console.log(getSym + "cannot place a move");
+			console.log(colourOfTurn + " cannot place a move");
 			tempStopAllClicks();
 			checkWin();
 		}
 	} else {
 		console.log("Invalid Move");
+		return;
 	}
 };
 
-var checkOKtoPlace = function (sym, x, y) {
+var checkOKtoPlace = function (color, x, y) {
 	var arr = [
-		checkTopLeft(sym, x, y),
-		checkTop(sym, x, y),
-		checkTopRight(sym, x, y),
-		checkRight(sym, x, y),
-		checkBottomRight(sym, x, y),
-		checkBottom(sym, x, y),
-		checkBottomLeft(sym, x, y),
-		checkLeft(sym, x, y)
+		checkTopLeft(color, x, y),
+		checkTop(color, x, y),
+		checkTopRight(color, x, y),
+		checkRight(color, x, y),
+		checkBottomRight(color, x, y),
+		checkBottom(color, x, y),
+		checkBottomLeft(color, x, y),
+		checkLeft(color, x, y)
 	];
 
 	direction = arr;
@@ -266,15 +244,15 @@ var checkOKtoPlace = function (sym, x, y) {
 };
 
 //check top left
-var checkTopLeft = function (sym, x, y) {
+var checkTopLeft = function (color, x, y) {
 	if (x < 2 || y < 2) {
 		return false;
 	} else {
 		if (boardArray[y - 1][x - 1] !== null) {
-			if (boardArray[y - 1][x - 1] !== sym) {
+			if (boardArray[y - 1][x - 1] !== color) {
 				var minCount = Math.min(x, y) + 1;
 				for (i = 2; i < minCount; i++) {
-					if (boardArray[y - i][x - i] === sym) {
+					if (boardArray[y - i][x - i] === color) {
 						return true;
 					} else if (boardArray[y - i][x - i] === null) {
 						return false;
@@ -291,15 +269,15 @@ var checkTopLeft = function (sym, x, y) {
 	}
 };
 //check top
-var checkTop = function (sym, x, y) {
+var checkTop = function (color, x, y) {
 	if (y < 2) {
 		return false;
 	} else {
 		if (boardArray[y - 1][x] !== null) {
-			if (boardArray[y - 1][x] !== sym) {
+			if (boardArray[y - 1][x] !== color) {
 				var minCount = y + 1;
 				for (i = 2; i < minCount; i++) {
-					if (boardArray[y - i][x] === sym) {
+					if (boardArray[y - i][x] === color) {
 						return true;
 					} else if (boardArray[y - i][x] === null) {
 						return false;
@@ -316,15 +294,15 @@ var checkTop = function (sym, x, y) {
 	}
 };
 //check top right
-var checkTopRight = function (sym, x, y) {
+var checkTopRight = function (color, x, y) {
 	if (y < 2 || x > 8 - 3) {
 		return false;
 	} else {
 		if (boardArray[y - 1][x + 1] !== null) {
-			if (boardArray[y - 1][x + 1] !== sym) {
+			if (boardArray[y - 1][x + 1] !== color) {
 				var minCount = Math.min(8 - x - 1, y) + 1;
 				for (i = 2; i < minCount; i++) {
-					if (boardArray[y - i][x + i] === sym) {
+					if (boardArray[y - i][x + i] === color) {
 						return true;
 					} else if (boardArray[y - i][x + i] === null) {
 						return false;
@@ -341,15 +319,15 @@ var checkTopRight = function (sym, x, y) {
 	}
 };
 //check right
-var checkRight = function (sym, x, y) {
+var checkRight = function (color, x, y) {
 	if (x > 8 - 3) {
 		return false;
 	} else {
 		if (boardArray[y][x + 1] !== null) {
-			if (boardArray[y][x + 1] !== sym) {
+			if (boardArray[y][x + 1] !== color) {
 				var minCount = 8 - x;
 				for (i = 2; i < 8; i++) {
-					if (boardArray[y][x + i] === sym) {
+					if (boardArray[y][x + i] === color) {
 						return true;
 					} else if (boardArray[y][x + i] === null) {
 						return false;
@@ -367,15 +345,15 @@ var checkRight = function (sym, x, y) {
 };
 
 //check bottom right
-var checkBottomRight = function (sym, x, y) {
+var checkBottomRight = function (color, x, y) {
 	if (x > 8 - 3 || y > 8 - 3) {
 		return false;
 	} else {
 		if (boardArray[y + 1][x + 1] !== null) {
-			if (boardArray[y + 1][x + 1] !== sym) {
+			if (boardArray[y + 1][x + 1] !== color) {
 				var minCount = Math.min(8 - x, 8 - y);
 				for (i = 2; i < minCount; i++) {
-					if (boardArray[y + i][x + i] === sym) {
+					if (boardArray[y + i][x + i] === color) {
 						return true;
 					} else if (boardArray[y + i][x + i] === null) {
 						return false;
@@ -392,15 +370,15 @@ var checkBottomRight = function (sym, x, y) {
 	}
 };
 //check bottom
-var checkBottom = function (sym, x, y) {
+var checkBottom = function (color, x, y) {
 	if (y > 8 - 3) {
 		return false;
 	} else {
 		if (boardArray[y + 1][x] !== null) {
-			if (boardArray[y + 1][x] !== sym) {
+			if (boardArray[y + 1][x] !== color) {
 				var minCount = 8 - y;
 				for (i = 2; i < minCount; i++) {
-					if (boardArray[y + i][x] === sym) {
+					if (boardArray[y + i][x] === color) {
 						return true;
 					} else if (boardArray[y + i][x] === null) {
 						return false;
@@ -418,15 +396,15 @@ var checkBottom = function (sym, x, y) {
 };
 
 //check bottom left
-var checkBottomLeft = function (sym, x, y) {
+var checkBottomLeft = function (color, x, y) {
 	if (y > 8 - 3 || x < 2) {
 		return false;
 	} else {
 		if (boardArray[y + 1][x - 1] !== null) {
-			if (boardArray[y + 1][x - 1] !== sym) {
+			if (boardArray[y + 1][x - 1] !== color) {
 				var minCount = Math.min(8 - y - 1, x) + 1;
 				for (i = 2; i < minCount; i++) {
-					if (boardArray[y + i][x - i] === sym) {
+					if (boardArray[y + i][x - i] === color) {
 						return true;
 					} else if (boardArray[y + i][x - i] === null) {
 						return false;
@@ -444,15 +422,15 @@ var checkBottomLeft = function (sym, x, y) {
 };
 
 //check left
-var checkLeft = function (sym, x, y) {
+var checkLeft = function (color, x, y) {
 	if (x < 2) {
 		return false;
 	} else {
 		if (boardArray[y][x - 1] !== null) {
-			if (boardArray[y][x - 1] !== sym) {
+			if (boardArray[y][x - 1] !== color) {
 				var minCount = x + 1;
 				for (i = 2; i < minCount; i++) {
-					if (boardArray[y][x - i] === sym) {
+					if (boardArray[y][x - i] === color) {
 						return true;
 					} else if (boardArray[y][x - i] === null) {
 						return false;
@@ -469,14 +447,14 @@ var checkLeft = function (sym, x, y) {
 	}
 };
 
-var removePredictionDots = function (sym) {
+var removePredictionDots = function (color) {
 	for (var i = 0; i < predictions.length; i++) {
 		var target = document.getElementById(predictions[i]);
 		target.removeChild(target.firstChild);
 	}
 };
 
-var changeRespectiveDisks = function (target, sym, x, y) {
+var changeRespectiveDisks = function (target, color, x, y) {
 	var topLeftSettle = false;
 	var topSettle = false;
 	var topRightSettle = false;
@@ -493,16 +471,16 @@ var changeRespectiveDisks = function (target, sym, x, y) {
 					while (!topLeftSettle) {
 						if (boardArray[y - 1][x - 1] !== null) {
 							var a = 1;
-							while (boardArray[y - a][x - a] !== sym) {
-								boardArray[y - a][x - a] = sym;
-								if (sym === "W")
+							while (boardArray[y - a][x - a] !== color) {
+								boardArray[y - a][x - a] = color;
+								if (color === "W")
 									document
 										.getElementById(8 * (y - a) + (x - a))
-										.firstChild.setAttribute("class", "white-tiles");
+										.firstChild.setAttribute("class", "white-disks");
 								else
 									document
 										.getElementById(8 * (y - a) + (x - a))
-										.firstChild.setAttribute("class", "black-tiles");
+										.firstChild.setAttribute("class", "black-disks");
 								a++;
 							}
 							topLeftSettle = true;
@@ -517,16 +495,16 @@ var changeRespectiveDisks = function (target, sym, x, y) {
 					while (!topSettle) {
 						if (boardArray[y - 1][x] !== null) {
 							var a = 1;
-							while (boardArray[y - a][x] !== sym) {
-								boardArray[y - a][x] = sym;
-								if (sym === "W")
+							while (boardArray[y - a][x] !== color) {
+								boardArray[y - a][x] = color;
+								if (color === "W")
 									document
 										.getElementById(8 * (y - a) + x)
-										.firstChild.setAttribute("class", "white-tiles");
+										.firstChild.setAttribute("class", "white-disks");
 								else
 									document
 										.getElementById(8 * (y - a) + x)
-										.firstChild.setAttribute("class", "black-tiles");
+										.firstChild.setAttribute("class", "black-disks");
 								a++;
 							}
 							topSettle = true;
@@ -541,17 +519,17 @@ var changeRespectiveDisks = function (target, sym, x, y) {
 					while (!topRightSettle) {
 						if (boardArray[y - 1][x + 1] !== null) {
 							var a = 1;
-							while (boardArray[y - a][x + a] !== sym) {
-								boardArray[y - a][x + a] = sym;
+							while (boardArray[y - a][x + a] !== color) {
+								boardArray[y - a][x + a] = color;
 
-								if (sym === "W")
+								if (color === "W")
 									document
 										.getElementById(8 * (y - a) + (x + a))
-										.firstChild.setAttribute("class", "white-tiles");
+										.firstChild.setAttribute("class", "white-disks");
 								else
 									document
 										.getElementById(8 * (y - a) + (x + a))
-										.firstChild.setAttribute("class", "black-tiles");
+										.firstChild.setAttribute("class", "black-disks");
 								a++;
 							}
 
@@ -567,16 +545,16 @@ var changeRespectiveDisks = function (target, sym, x, y) {
 					while (!rightSettle) {
 						if (boardArray[y][x + 1] !== null) {
 							var a = 1;
-							while (boardArray[y][x + a] !== sym) {
-								boardArray[y][x + a] = sym;
-								if (sym === "W")
+							while (boardArray[y][x + a] !== color) {
+								boardArray[y][x + a] = color;
+								if (color === "W")
 									document
 										.getElementById(8 * y + (x + a))
-										.firstChild.setAttribute("class", "white-tiles");
+										.firstChild.setAttribute("class", "white-disks");
 								else
 									document
 										.getElementById(8 * y + (x + a))
-										.firstChild.setAttribute("class", "black-tiles");
+										.firstChild.setAttribute("class", "black-disks");
 								a++;
 							}
 							rightSettle = true;
@@ -591,16 +569,16 @@ var changeRespectiveDisks = function (target, sym, x, y) {
 					while (!bottomRightSettle) {
 						if (boardArray[y + 1][x + 1] !== null) {
 							var a = 1;
-							while (boardArray[y + a][x + a] !== sym) {
-								boardArray[y + a][x + a] = sym;
-								if (sym === "W")
+							while (boardArray[y + a][x + a] !== color) {
+								boardArray[y + a][x + a] = color;
+								if (color === "W")
 									document
 										.getElementById(8 * (y + a) + (x + a))
-										.firstChild.setAttribute("class", "white-tiles");
+										.firstChild.setAttribute("class", "white-disks");
 								else
 									document
 										.getElementById(8 * (y + a) + (x + a))
-										.firstChild.setAttribute("class", "black-tiles");
+										.firstChild.setAttribute("class", "black-disks");
 								a++;
 							}
 							bottomRightSettle = true;
@@ -615,16 +593,16 @@ var changeRespectiveDisks = function (target, sym, x, y) {
 					while (!bottomSettle) {
 						if (boardArray[y + 1][x] !== null) {
 							var a = 1;
-							while (boardArray[y + a][x] !== sym) {
-								boardArray[y + a][x] = sym;
-								if (sym === "W")
+							while (boardArray[y + a][x] !== color) {
+								boardArray[y + a][x] = color;
+								if (color === "W")
 									document
 										.getElementById(8 * (y + a) + x)
-										.firstChild.setAttribute("class", "white-tiles");
+										.firstChild.setAttribute("class", "white-disks");
 								else
 									document
 										.getElementById(8 * (y + a) + x)
-										.firstChild.setAttribute("class", "black-tiles");
+										.firstChild.setAttribute("class", "black-disks");
 								a++;
 							}
 							bottomSettle = true;
@@ -639,16 +617,16 @@ var changeRespectiveDisks = function (target, sym, x, y) {
 					while (!bottomLeftSettle) {
 						if (boardArray[y + 1][x - 1] !== null) {
 							var a = 1;
-							while (boardArray[y + a][x - a] !== sym) {
-								boardArray[y + a][x - a] = sym;
-								if (sym === "W")
+							while (boardArray[y + a][x - a] !== color) {
+								boardArray[y + a][x - a] = color;
+								if (color === "W")
 									document
 										.getElementById(8 * (y + a) + (x - a))
-										.firstChild.setAttribute("class", "white-tiles");
+										.firstChild.setAttribute("class", "white-disks");
 								else
 									document
 										.getElementById(8 * (y + a) + (x - a))
-										.firstChild.setAttribute("class", "black-tiles");
+										.firstChild.setAttribute("class", "black-disks");
 								a++;
 							}
 							bottomLeftSettle = true;
@@ -663,16 +641,16 @@ var changeRespectiveDisks = function (target, sym, x, y) {
 					while (!leftSettle) {
 						if (boardArray[y][x - 1] !== null) {
 							var a = 1;
-							while (boardArray[y][x - a] !== sym) {
-								boardArray[y][x - a] = sym;
-								if (sym === "W")
+							while (boardArray[y][x - a] !== color) {
+								boardArray[y][x - a] = color;
+								if (color === "W")
 									document
 										.getElementById(8 * y + (x - a))
-										.firstChild.setAttribute("class", "white-tiles");
+										.firstChild.setAttribute("class", "white-disks");
 								else
 									document
 										.getElementById(8 * y + (x - a))
-										.firstChild.setAttribute("class", "black-tiles");
+										.firstChild.setAttribute("class", "black-disks");
 								a++;
 							}
 							leftSettle = true;
@@ -686,36 +664,36 @@ var changeRespectiveDisks = function (target, sym, x, y) {
 	}
 };
 
-var checkSlots = function (sym) {
+var checkSlots = function (color) {
 	let emptySlots = 0;
-	let roughtCount = 0;
+	let roughCount = 0;
 	for (var y = 0; y < 8; y++) {
 		for (var x = 0; x < 8; x++) {
 			if (boardArray[y][x] === null) {
 				emptySlots++;
-				if (checkOKtoPlace(sym, x, y)) {
-					roughtCount++;
+				if (checkOKtoPlace(color, x, y)) {
+					roughCount++;
 				}
 			}
 		}
 	}
 
-	return { empty: emptySlots, movable: roughtCount };
+	return { empty: emptySlots, movable: roughCount };
 };
 
-var predictionDots = function (sym) {
+var predictionDots = function (color) {
 	predictions = [];
 	for (var y = 0; y < 8; y++) {
 		for (var x = 0; x < 8; x++) {
 			if (boardArray[y][x] === null) {
-				if (checkOKtoPlace(sym, x, y)) {
-					var createPredictor = document.createElement("div");
-					createPredictor.setAttribute("class", "predictor");
-					createPredictor.setAttribute("horizontal", x);
-					createPredictor.setAttribute("vertical", y);
-					createPredictor.setAttribute("onclick", "runDisk(this)");
+				if (checkOKtoPlace(color, x, y)) {
+					var createPrediction = document.createElement("div");
+					createPrediction.setAttribute("class", "prediction");
+					createPrediction.setAttribute("horizontal", x);
+					createPrediction.setAttribute("vertical", y);
+					createPrediction.setAttribute("onclick", "runDisk(this)");
 					var id = y * 8 + x;
-					document.getElementById(id).appendChild(createPredictor);
+					document.getElementById(id).appendChild(createPrediction);
 					predictions.push(id);
 				}
 			}
@@ -736,13 +714,14 @@ var tempStopAllClicks = function () {
 };
 
 var checkWin = function () {
-	var getWinDisplay = document.querySelector(".win-lose-draw");
+	var getWinDisplay = document.querySelector("#win-lose-draw");
 	let actualBlackScore = parseInt(blackScore.innerHTML);
   let actualWhiteScore = parseInt(whiteScore.innerHTML);
 
 		let winner;
 		if (actualBlackScore > actualWhiteScore) {
-				winner = "B";
+			winner = "B";
+			getWinDisplay.innerHTML = "The Winner is Black";
 			ws.send(
 				JSON.stringify({
 					type: Messages.GAME_WON_BY,
@@ -750,7 +729,8 @@ var checkWin = function () {
 				})
 			);
 		} else if (actualBlackScore < actualWhiteScore) {
-      winner = "W";
+	 		 winner = "W";
+			getWinDisplay.innerHTML = "The Winner is White";
 			ws.send(
 				JSON.stringify({
           			type: Messages.GAME_WON_BY,
@@ -759,24 +739,27 @@ var checkWin = function () {
 			);
 		} else if (actualBlackScore === actualWhiteScore) {
 			getWinDisplay.innerHTML = "It is a Draw!!";
+			ws.send(JSON.stringify({
+				type: Messages.GAME_WON_BY,
+			    data: "DRAW" 
+		  }));
 		}
 	};
 
 var removeMainPageContainer = function () {
-	var mainContainer = document.querySelector("#center");
+	var mainContainer = document.querySelector("#main-game");
 	while (mainContainer.firstChild) {
 		mainContainer.removeChild(mainContainer.firstChild);
 	}
 };
 
-var runDisk = function (something) {
-	console.log(something.parentNode);
-	addDisk(something.parentNode);
+var runDisk = function (position) {
+	addDisk(position.parentNode);
 };
 
 openWebSocketConnection();
 removeMainPageContainer();
 InitializeBoard();
-var getSym = counter % 2 === 0 ? "W" : "B";
-predictionDots(getSym);
+var colourOfTurn = counter % 2 === 0 ? "W" : "B";
+predictionDots(colourOfTurn);
 

@@ -73,29 +73,45 @@ wss.on("connection", function connection(ws){
   connected.on("message", function(message){
       let currentMessage = JSON.parse(message);
       let theGame = currentgames[connected.id];
-      let isPlayerWhite = theGame.WhitePlayer == connected ? true : false;
-    
-      if (isPlayerWhite) {
+      let isPlayerWhite;
+
+      if(theGame.WhitePlayer == connected){
+        isPlayerWhite = true;
+      }else{
+        isPlayerWhite = false;
+      }
+
+      if(isPlayerWhite) {
         if (currentMessage.type == messages.HAS_MADE_A_MOVE) {
           if (theGame.has2Players()) {
             theGame.BlackPlayer.send(message);
+            console.log("sending move to black player");
           }
         }
 
         if (currentMessage.type == messages.GAME_WON_BY) {
           theGame.setStatus(currentMessage.data);
-          gameStatus.finishedGames++;
+          theGame.BlackPlayer.send(JSON.stringify({
+            type: messages.GAME_OVER,
+              data: currentMessage.data
+          }));
+          status.finishedGames++;
         }
       } else{
         if (currentMessage.type == messages.HAS_MADE_A_MOVE) {
           if (theGame.has2Players()) {
             theGame.WhitePlayer.send(message);
+            console.log("sending move to white player");
           }
         }
      
         if (currentMessage.type == messages.GAME_WON_BY) {
           theGame.setStatus(currentMessage.data);
-          gameStatus.finishedGames++;
+          theGame.WhitePlayer.send(JSON.stringify({
+            type: messages.GAME_OVER,
+              data: currentMessage.data
+          }));
+          status.finishedGames++;
         }
       }
     });

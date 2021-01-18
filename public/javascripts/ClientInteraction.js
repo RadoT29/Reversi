@@ -17,10 +17,20 @@ const openWebSocketConnection = () => {
 			handlePlayedMove(currentMessage);
 		} else if (currentMessage.data == "WHITE"){
 			colorOfPlayer = "W";
+			document.getElementById("I").setAttribute("class", "white");
+			document.getElementById("opp").setAttribute("class", "black");
 			console.log(colorOfPlayer);
 		} else if (currentMessage.data == "BLACK"){
 			colorOfPlayer = "B";
+			document.getElementById("I").setAttribute("class", "black");
+			document.getElementById("opp").setAttribute("class", "white");
 			console.log(colorOfPlayer);
+		} else if (currentMessage.type == Messages.GAME_OVER){
+			if(currentMessage.data == "DRAW"){
+				getWinDisplay.innerHTML = "It is a Draw!!";
+			} else{
+			getWinDisplay.innerHTML = "The winner is "+ currentMessage.data;
+			}
 		} else{
 			return;
 		}
