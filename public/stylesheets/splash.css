@@ -19,13 +19,13 @@
     line-height: 70%;
 }
 
-#center h2::before,
-h2::after{
+#center h2::before{
     content: "The board ";
     color: rgb(49, 71, 94);
     font-size: 1em;
     font-weight: bold;
 }
+
 #center h2::after {
     content: " \A \A for two";
     color: rgb(49, 71, 94);
@@ -47,10 +47,23 @@ h2::after{
 	position: absolute;
     top: 50%;
     left: 50%;
-    -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);     
 	color: rgb(240, 84, 84);
     transition: all 0.05s linear;
+    transition: all 0.05s linear;   
+    animation: moving infinite;
+    animation-duration: 10s;
+    animation-delay: 10s;
+}
+
+@keyframes moving {
+    0%,30%,60% {
+        transform: translate(-50%, -50%) rotate(0) ;
+      }
+      100% {
+        transform: translate(-50%, -50%) rotate(360deg) ;
+        animation-delay: 3s;    
+      }
 }
 
 #game-button:hover{
