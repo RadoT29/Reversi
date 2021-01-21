@@ -4,20 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reversi Game</title>
-    <link rel="stylesheet" type="text/css" href="styleGame.css" />
+    <link rel="stylesheet" type="text/css" href="./stylesheets/style.css" />
+    <link rel="stylesheet" href="./stylesheets/game.css">
 </head>
  <body>
+    <div class="alert">
+        <h1>Your screen is not compatible with out application!!!</h1>
+    </div>  
     <main class="game-body">
         <section id="titles">
             
             <h1>Reversi</h1>
             <div class="opponent">
-            <div id="opp"></div>
-            <h3>Opponent</h3>
+            <h3 id="opp">Opponent</h3>
             </div>
             <div class="you">
-            <div id="I"></div>
-            <h3>You</h3>
+            <h3 id="I">You</h3>
             </div>
         </section>
         <section id="game-section" >
@@ -33,9 +35,10 @@
             </div>
             <div id="win-lose-draw"></div>
         </section>  
+        <div id="right-corner"></div>
     </main>   
 
-    <div id="right-corner"></div> 
+     
 
     <script src="javascripts/config.js"></script>
     <script src="javascripts/ClientInteraction.js"></script>

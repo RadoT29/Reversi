@@ -4,24 +4,22 @@ var mygame = function(ID){
     this.BlackPlayer = null;
     this.gameState = "0";
     this.possibleMoves = 1;
-    this.turn = "WHITE";  
+    this.finalStatus = null;
 };
 
 mygame.prototype.states = {};
 mygame.prototype.states["0"] = 0;
 mygame.prototype.states["1"] = 1;
 mygame.prototype.states["2"] = 2;
-mygame.prototype.states["NO MOVES"] =3;
-mygame.prototype.states["WHITE"] = 4; 
-mygame.prototype.states["BLACK"] = 5;
-mygame.prototype.states["DRAW"] = 6;
-mygame.prototype.states["ABORTED"] = 7;
+mygame.prototype.states["WHITE"] = 3; 
+mygame.prototype.states["BLACK"] = 4;
+mygame.prototype.states["DRAW"] = 5;
+mygame.prototype.states["ABORTED"] = 6;
 
 mygame.prototype.transformList = [
   [0, 1, 0, 0, 0, 0, 0], //0 
   [1, 0, 1, 0, 0, 0, 0], //1
-  [0, 0, 0, 1, 0, 0, 1], //2 
-  [0, 0, 0, 1, 1, 1, 1], //NO MORE MOVES
+  [0, 0, 0, 1, 1, 1, 1], //2 
   [0, 0, 0, 0, 0, 0, 0], //WHITE WON
   [0, 0, 0, 0, 0, 0, 0], //BLACK WON
   [0, 0, 0, 0, 0, 0, 0], //DRAW

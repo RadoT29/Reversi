@@ -19,27 +19,11 @@ var newBoardArray = function(){
 
  var createBoardHtml = function(){
     var container = document.querySelector("#main-game");
-    var boardContainer = document.createElement("div");
-	boardContainer.setAttribute("class", "main-board");
-	var boardFrame = document.createElement("div");
-	boardFrame.setAttribute("class", "board-frame");
-
-	for (var i = 0; i < 8; i++) {
-		var row = document.createElement("div");
-		if(i==7){
-			row.setAttribute("class", "rowLast")
-		}else{
-		row.setAttribute("class", "row");
+		for (var j = 0; j < 64; j++) {
+			var file = document.createElement("div");
+			file.setAttribute("class", "col");
+			container.appendChild(file);
 		}
-		for (var j = 0; j < 8; j++) {
-			var square = document.createElement("div");
-			square.setAttribute("class", "col");
-			row.appendChild(square);
-		}
-		boardContainer.appendChild(row);
-	}
-	boardFrame.appendChild(boardContainer);
-	container.appendChild(boardFrame);
  }
   
 var placeStartingDisks = function(){
@@ -60,8 +44,6 @@ var placeStartingDisks = function(){
         boardArray[yValue][xValue] = "B";
             }
           file.appendChild(disk);
-          file.removeEventListener("click", addDisk);
-  
           colour++;
     }
   
@@ -78,11 +60,9 @@ var placeStartingDisks = function(){
               boardArray[yValue][xValue] = "B";
           }
           file.appendChild(disk);
-          file.removeEventListener("click", addDisk);
   
-          colour++;
-    }
-    
+		  colour++;	  
+	}
   }
   
 var InitializeBoard = function(){
@@ -94,12 +74,11 @@ var InitializeBoard = function(){
               files[id].setAttribute("horizontal", j);
               files[id].setAttribute("vertical", i);
               files[id].setAttribute("id", id);
-              files[id].addEventListener("click", addDisk);
               id++;
              }
           }   
     newBoardArray();
-    placeStartingDisks();
+	placeStartingDisks();
   }
 
 var diskCounting = function () {
@@ -136,6 +115,8 @@ const getFiles = (x, y) => {
 var addDisk = (event, socketData = null) => {
 	let xValue, yValue, colourOfTurn, target;
 
+	
+
   if(!socketData) {
 		event instanceof Element ? (target = event) : (target = event.target);
 
@@ -148,21 +129,21 @@ var addDisk = (event, socketData = null) => {
 		colourOfTurn = socketData.message.color;
 		target = getFiles(xValue, yValue);
   }
-  
-  if (!socketData) {
-		if (colorOfPlayer !== colourOfTurn) {
-			console.log("It is not your turn");
-			return;
-	}
-	}
 
+  if (!socketData) {
+	if (colorOfPlayer != colourOfTurn) {
+		console.log("It is not your turn");
+		return
+	}
+}
+  
   console.log( colourOfTurn+" player made a move: horizontal:"+xValue+", vertical: "+yValue,);
   
 	if (checkOKtoPlace(colourOfTurn, xValue, yValue)) {
 		removePredictionDots();
 
 		var disk = document.createElement("div");
-		target.classList.add("test");
+		//target.classList.add("test");
 
 		if (colourOfTurn === "W") {
 			disk.setAttribute("class", "white-disks");
@@ -176,7 +157,6 @@ var addDisk = (event, socketData = null) => {
 		counter++;
 
 		target.appendChild(disk);
-		target.removeEventListener("click", addDisk);
 
 		if(!socketData){
 			ws.send(
@@ -191,11 +171,20 @@ var addDisk = (event, socketData = null) => {
 		colourOfTurn = counter % 2 === 0 ? "W" : "B";
 
 		console.log(colourOfTurn + "'s turn");
+
 		var slots = checkSlots(colourOfTurn);
 
 		if (slots.empty > 0) {
 			if (slots.movable > 0) {
 				console.log(colourOfTurn + " still can place a disk");
+				if(colourOfTurn == colorOfPlayer){
+					document.querySelector('#opp').style.setProperty("--contentTurn2", "");
+					document.querySelector('#I').style.setProperty("--contentTurn", "' can make a move!'");
+				}else{
+					document.querySelector('#opp').style.setProperty("--contentTurn2", "' can make a move!'");
+					document.querySelector('#I').style.setProperty("--contentTurn", "");
+				}
+		
         		predictionDots(colourOfTurn);
 			} else {
 				console.log(colourOfTurn + " has no place to place a disk, pass");
@@ -207,13 +196,13 @@ var addDisk = (event, socketData = null) => {
 					predictionDots(colourOfTurn);
 				} else {
 					console.log(colourOfTurn + " also cannot place a disk, end game ");
-					tempStopAllClicks();
+					document.querySelector('#I').style.setProperty("--contentTurn", "");
+					document.querySelector('#opp').style.setProperty("--contentTurn2", "");
 					checkWin();
 				}
 			}
 		} else {
 			console.log(colourOfTurn + " cannot place a move");
-			tempStopAllClicks();
 			checkWin();
 		}
 	} else {
@@ -701,22 +690,10 @@ var predictionDots = function (color) {
 	}
 };
 
-var tempStopAllClicks = function () {
-	for (var y = 0; y < 8; y++) {
-		for (var x = 0; x < 8; x++) {
-			if (boardArray[y][x] === null) {
-				document
-					.getElementById(y * 8 + x)
-					.removeEventListener("click", addDisk);
-			}
-		}
-	}
-};
-
 var checkWin = function () {
 	var getWinDisplay = document.querySelector("#win-lose-draw");
 	let actualBlackScore = parseInt(blackScore.innerHTML);
-  let actualWhiteScore = parseInt(whiteScore.innerHTML);
+ 	let actualWhiteScore = parseInt(whiteScore.innerHTML);
 
 		let winner;
 		if (actualBlackScore > actualWhiteScore) {
@@ -729,7 +706,7 @@ var checkWin = function () {
 				})
 			);
 		} else if (actualBlackScore < actualWhiteScore) {
-	 		 winner = "W";
+	 		winner = "W";
 			getWinDisplay.innerHTML = "The Winner is White";
 			ws.send(
 				JSON.stringify({

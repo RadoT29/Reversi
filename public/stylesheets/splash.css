@@ -1,0 +1,127 @@
+#center {
+	width: 100%;
+	letter-spacing: 2px;
+}
+
+#center h1 {
+    color: rgb(240, 84, 84);
+    font-size: 4em;
+    margin: 0;
+    padding: 5% 0 0 3%;
+    font-weight: bold;
+}
+
+#center h2{
+    color: rgb(49, 71, 94);
+    font-size: 3em;
+    margin-left: 3%;
+    font-weight: bold;
+    line-height: 70%;
+}
+
+#center h2::before,
+h2::after{
+    content: "The board ";
+    color: rgb(49, 71, 94);
+    font-size: 1em;
+    font-weight: bold;
+}
+#center h2::after {
+    content: " \A \A for two";
+    color: rgb(49, 71, 94);
+    font-size: 1em;
+    white-space: pre; 
+    font-weight: bold;
+}
+
+#game-button {
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+	padding: 5px 40px;
+    font-size: 2.5em;
+	text-align: center;
+	cursor: pointer;
+	outline: none;
+	background-color: rgb(49, 71, 94);
+	border: none;
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);     
+	color: rgb(240, 84, 84);
+    transition: all 0.05s linear;
+}
+
+#game-button:hover{
+    font-size: 3em;
+}
+
+#game-button:active{
+    font-size: 1.5em;
+}
+
+.logo {
+    position: absolute;
+    width: 40vh;
+    height: 40vh;
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    background-color: rgb(221, 221, 221);
+    bottom: 2.5%;
+    left: 3%;
+}
+
+.field{
+    border: 5px solid rgb(33, 40, 50);
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    position: relative;
+    border-bottom:none;
+}
+
+.field:nth-child(odd){
+    border-right:none;
+ }
+ .field:nth-last-child(1), 
+ .field:nth-last-child(2){
+    border-bottom:5px solid rgb(33, 40, 50);
+ }
+
+.circle{
+    border: 5px solid rgb(33, 40, 50);
+}
+
+.dash{
+    position: absolute;
+    top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.right{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 100vh 45vw;
+    border-color: transparent transparent rgb(33, 40, 50) transparent;
+}
+
+.score{
+    right: 5%;
+    bottom: 2.5%;
+    position: absolute;
+    width: 30vw;
+    float: right;
+    color: rgb(240, 84, 84);
+    font-size: 2em;
+    text-align: right;
+}
+.score h3{
+    margin: 2% 0 2% 0;
+}

@@ -7,9 +7,6 @@ var messages = require("./public/javascripts/messages");
 
 var status = require("./Stats");
 var Game = require("./game");
-const { playerCount } = require("./Stats");
-const { connect } = require("./routes/index");
-const { appendFileSync } = require("fs");
 
 var port = process.argv[2];
 var app = express();
@@ -35,9 +32,9 @@ var currentgames = {};
 setInterval(function() {
   for (let i in currentgames) {
     if (Object.prototype.hasOwnProperty.call(currentgames,i)) {
-      let gameObj = currentgames[i];
-      //if the gameObj has a final status, the game is complete/aborted
-      if (gameObj.finalStatus != null) {
+      let closeGame = currentgames[i];
+      //if the closeGame has a final status, the game is complete/aborted
+      if (closeGame.finalStatus != null) {
         delete currentgames[i];
       }
     }
@@ -70,7 +67,7 @@ wss.on("connection", function connection(ws){
       newGame = new Game(status.startedGames++);
     }
 
-  connected.on("message", function(message){
+    connected.on("message", function(message){
       let currentMessage = JSON.parse(message);
       let theGame = currentgames[connected.id];
       let isPlayerWhite;
@@ -80,87 +77,89 @@ wss.on("connection", function connection(ws){
       }else{
         isPlayerWhite = false;
       }
-
+      
       if(isPlayerWhite) {
-        if (currentMessage.type == messages.HAS_MADE_A_MOVE) {
+        if(currentMessage.type == messages.HAS_MADE_A_MOVE) {
           if (theGame.has2Players()) {
             theGame.BlackPlayer.send(message);
             console.log("sending move to black player");
           }
-        }
-
-        if (currentMessage.type == messages.GAME_WON_BY) {
+        }else if(currentMessage.type == messages.GAME_WON_BY) {
           theGame.setStatus(currentMessage.data);
           theGame.BlackPlayer.send(JSON.stringify({
             type: messages.GAME_OVER,
               data: currentMessage.data
           }));
           status.finishedGames++;
+          theGame.finalStatus = 1;
+          console.log(currentMessage.data);
+        } else{
+          return;
         }
       } else{
-        if (currentMessage.type == messages.HAS_MADE_A_MOVE) {
+        if(currentMessage.type == messages.HAS_MADE_A_MOVE) {
           if (theGame.has2Players()) {
             theGame.WhitePlayer.send(message);
             console.log("sending move to white player");
           }
-        }
-     
-        if (currentMessage.type == messages.GAME_WON_BY) {
+        }else if(currentMessage.type == messages.GAME_WON_BY) {
           theGame.setStatus(currentMessage.data);
           theGame.WhitePlayer.send(JSON.stringify({
             type: messages.GAME_OVER,
-              data: currentMessage.data
+            data: currentMessage.data
           }));
           status.finishedGames++;
+          theGame.finalStatus = 1;
+          console.log(currentMessage.data);
+        } else{
+          return;
         }
       }
     });
     
-
-
     connected.on("close", function(code){
 
         console.log(connected.id + " disconnected ...");
 
         if(code == "1001"){
 
-            let gameObj = currentgames[connected.id];
+            let closeGame = currentgames[connected.id];
 
-            if (gameObj.isTransformPossible(gameObj.gameState, "ABORTED")) {
-              gameObj.setStatus("ABORTED");
-              gameObj.playerCount--;
+            if (closeGame.isTransformPossible(closeGame.gameState, "ABORTED")) {
+              closeGame.setStatus("ABORTED");
+              closeGame.finalStatus = 1;
+              closeGame.playerCount--;
+              closeGame.playerCount--;
 
         try {
-            gameObj.WhitePlayer.close();
-            gameObj.WhitePlayer = null;
+            closeGame.WhitePlayer.close();
+            closeGame.WhitePlayer = null;
           } catch (e) {
             console.log("White Player closing: " + e);
           }
   
           try {
-            gameObj.BlackPlayer.close();
-            gameObj.BlackPlayer = null;
+            closeGame.BlackPlayer.close();
+            closeGame.BlackPlayer = null;
           } catch (e) {
             console.log("Black Player closing: " + e);
           }
         }
 
-        if(gameObj.isTransformPossible(gameObj.gameState, "0")){
-          gameObj.setStatus("0");
-          gameObj.playerCount--;
+        if(closeGame.isTransformPossible(closeGame.gameState, "0")){
+          closeGame.setStatus("0");
+          closeGame.playerCount--;
           try {
-            gameObj.WhitePlayer.close();
-            gameObj.WhitePlayer = null;
+            closeGame.WhitePlayer.close();
+            closeGame.WhitePlayer = null;
           } catch (e) {
             console.log("White Player closing: " + e);
           }
         }
         }
     });  
+
 });
- 
-
-
 
 server.listen(port, () =>{
     console.log("Server started on port: %s", port);

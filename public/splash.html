@@ -4,14 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reversi</title>
-    <link rel="stylesheet" type="text/css" href="styleGame.css"/>
+    <link rel="stylesheet" type="text/css" href="./stylesheets/style.css"/>
+    <link rel="stylesheet" href="./stylesheets/splash.css">
 </head>
 <body>
+    <div class="alert">
+        <h1>Your screen is not compatible with out application!!!</h1>
+    </div>  
     <main>
         <section id="center">
             <h1>Reversi</h1>
-            <h2>The board <br> game for two</h2>
-            <img class = "logo"src="images/reversiSmallBoard.jpg" alt="Logo of the game">
+            <h2>game</h2>
+            <div class = "logo">
+                <div class="field">
+                    <div class="circle"></div>
+                </div>
+                <div class="field">
+                    <div class="circle">
+                        <img class="dash" src="./images/dashes.png" alt="Dashes">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="circle">
+                        <img class="dash" src="./images/dashes.png" alt="Dashes">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="circle"></div>
+                </div>
+            </div>
             <form action="/play" method="get">
                 <button id="game-button" type="submit" onclick="connect()">Play</button>
             </form> 
