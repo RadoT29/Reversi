@@ -1,6 +1,5 @@
 var ws;
 const handlePlayedMove = data => {
-
 	addDisk(null, data);
 };
 
@@ -24,6 +23,7 @@ const openWebSocketConnection = () => {
 			document.getElementById("I").setAttribute("class", "white");
 			document.getElementById("opp").setAttribute("class", "black");
 			console.log(colorOfPlayer);
+			document.querySelector("#win-lose-draw").innerHTML = "Currently waiting for another player!";
 		} else if (currentMessage.data == "BLACK"){
 			colorOfPlayer = "B";
 
@@ -31,6 +31,10 @@ const openWebSocketConnection = () => {
 			document.getElementById("I").setAttribute("class", "black");
 			document.getElementById("opp").setAttribute("class", "white");
 			console.log(colorOfPlayer);
+			document.querySelector("#win-lose-draw").innerHTML = "";
+			ws.send(Messages.TWO_PLAYERS_STRING);
+		} else if(currentMessage.type == Messages.TWO_PLAYERS_TEXT){
+			document.querySelector("#win-lose-draw").innerHTML = "";
 		} else if (currentMessage.type == Messages.GAME_OVER){
 
 			if(currentMessage.data == "DRAW"){

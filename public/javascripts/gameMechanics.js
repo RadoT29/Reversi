@@ -143,8 +143,7 @@ var addDisk = (event, socketData = null) => {
 		removePredictionDots();
 
 		var disk = document.createElement("div");
-		//target.classList.add("test");
-
+		
 		if (colourOfTurn === "W") {
 			disk.setAttribute("class", "white-disks");
 			boardArray[yValue][xValue] = colourOfTurn;
@@ -232,7 +231,6 @@ var checkOKtoPlace = function (color, x, y) {
 	}
 };
 
-//check top left
 var checkTopLeft = function (color, x, y) {
 	if (x < 2 || y < 2) {
 		return false;
@@ -257,7 +255,7 @@ var checkTopLeft = function (color, x, y) {
 		}
 	}
 };
-//check top
+
 var checkTop = function (color, x, y) {
 	if (y < 2) {
 		return false;
@@ -282,7 +280,7 @@ var checkTop = function (color, x, y) {
 		}
 	}
 };
-//check top right
+
 var checkTopRight = function (color, x, y) {
 	if (y < 2 || x > 8 - 3) {
 		return false;
@@ -307,7 +305,7 @@ var checkTopRight = function (color, x, y) {
 		}
 	}
 };
-//check right
+
 var checkRight = function (color, x, y) {
 	if (x > 8 - 3) {
 		return false;
@@ -333,7 +331,6 @@ var checkRight = function (color, x, y) {
 	}
 };
 
-//check bottom right
 var checkBottomRight = function (color, x, y) {
 	if (x > 8 - 3 || y > 8 - 3) {
 		return false;
@@ -358,7 +355,7 @@ var checkBottomRight = function (color, x, y) {
 		}
 	}
 };
-//check bottom
+
 var checkBottom = function (color, x, y) {
 	if (y > 8 - 3) {
 		return false;
@@ -384,7 +381,6 @@ var checkBottom = function (color, x, y) {
 	}
 };
 
-//check bottom left
 var checkBottomLeft = function (color, x, y) {
 	if (y > 8 - 3 || x < 2) {
 		return false;
@@ -410,7 +406,6 @@ var checkBottomLeft = function (color, x, y) {
 	}
 };
 
-//check left
 var checkLeft = function (color, x, y) {
 	if (x < 2) {
 		return false;

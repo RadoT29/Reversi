@@ -3,7 +3,6 @@ var mygame = function(ID){
     this.WhitePlayer = null;
     this.BlackPlayer = null;
     this.gameState = "0";
-    this.possibleMoves = 1;
     this.finalStatus = null;
 };
 

@@ -93,7 +93,7 @@ wss.on("connection", function connection(ws){
           status.finishedGames++;
           theGame.finalStatus = 1;
           console.log(currentMessage.data);
-        } else{
+        }else{
           return;
         }
       } else{
@@ -111,7 +111,9 @@ wss.on("connection", function connection(ws){
           status.finishedGames++;
           theGame.finalStatus = 1;
           console.log(currentMessage.data);
-        } else{
+        }else if(currentMessage.type == messages.TWO_PLAYERS_TEXT){
+          theGame.WhitePlayer.send(message);
+        }else{
           return;
         }
       }
@@ -128,8 +130,9 @@ wss.on("connection", function connection(ws){
             if (closeGame.isTransformPossible(closeGame.gameState, "ABORTED")) {
               closeGame.setStatus("ABORTED");
               closeGame.finalStatus = 1;
-              closeGame.playerCount--;
-              closeGame.playerCount--;
+              status.startedGames--;
+              status.playerCount--;
+              status.playerCount--;
 
         try {
             closeGame.WhitePlayer.close();
@@ -148,7 +151,8 @@ wss.on("connection", function connection(ws){
 
         if(closeGame.isTransformPossible(closeGame.gameState, "0")){
           closeGame.setStatus("0");
-          closeGame.playerCount--;
+          status.playerCount--;
+          status.startedGames--;
           try {
             closeGame.WhitePlayer.close();
             closeGame.WhitePlayer = null;

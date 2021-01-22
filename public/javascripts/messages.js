@@ -4,13 +4,7 @@
         type: "GAME-ABORTED"
     };
     exports.GAME_ABORTED_STRING = JSON.stringify(exports.GAME_ABORTED_OBJECT);
-
-    exports.OPEN_TEXT = "OPEN";
-    exports.OPEN_OBJECT = {
-      type: exports.OPEN_TEXT
-    }
-    exports.OPEN_STRING = JSON.stringify(exports.OPEN_OBJECT);
-
+    
     exports.PLAYER_TYPE = "PLAYER-TYPE";
     exports.WHITE_PLAYER_OBJECT = {
       type: exports.PLAYER_TYPE,
@@ -30,6 +24,13 @@
       data: null
     };
    exports.HAS_MADE_A_MOVE_STRING = JSON.stringify(exports.HAS_MADE_A_MOVE_OBJECT);
+
+   exports.TWO_PLAYERS_TEXT = "TWO PLAYERS ARE IN";
+   exports.TWO_PLAYERS_OBJECT = {
+     type: exports.TWO_PLAYERS_TEXT,
+     data: null
+   }
+   exports.TWO_PLAYERS_STRING = JSON.stringify(exports.TWO_PLAYERS_OBJECT);
 
   /*
    * Client -> Server : Announces the winner.
